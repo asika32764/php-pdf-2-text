@@ -1,0 +1,7 @@
+# System
+*.
+!.gitignore
+
+# Composer
+/vendor
+composer.lock
