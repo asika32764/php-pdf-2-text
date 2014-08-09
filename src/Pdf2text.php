@@ -34,7 +34,7 @@ class Pdf2text
 	 *
 	 * @var  bool
 	 */
-	protected $showprogress = true;
+	protected $showprogress = false;
 
 	/**
 	 * Property filename.
