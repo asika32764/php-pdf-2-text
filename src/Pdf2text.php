@@ -625,5 +625,32 @@ class Pdf2text
 
 		return $document;
 	}
+
+	/**
+	 * Method to set property showprogress
+	 *
+	 * @param   boolean $showprogress
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function showProgress($showprogress)
+	{
+		$this->showprogress = $showprogress;
+
+		return $this;
+	}
+
+	/**
+	 * Method to set property convertquotes
+	 *
+	 * @param   int $convertquotes
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function convertQuotes($convertquotes)
+	{
+		$this->convertquotes = $convertquotes;
+
+		return $this;
+	}
 }
- 
