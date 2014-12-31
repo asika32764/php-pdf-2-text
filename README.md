@@ -1,5 +1,7 @@
 # Simple PDF to text class
 
+[![Latest Stable Version](https://poser.pugx.org/asika/pdf2text/v/stable.svg)](https://packagist.org/packages/asika/pdf2text) [![Total Downloads](https://poser.pugx.org/asika/pdf2text/downloads.svg)](https://packagist.org/packages/asika/pdf2text) [![Latest Unstable Version](https://poser.pugx.org/asika/pdf2text/v/unstable.svg)](https://packagist.org/packages/asika/pdf2text) [![License](https://poser.pugx.org/asika/pdf2text/license.svg)](https://packagist.org/packages/asika/pdf2text)
+
 This is a simple PDF to text class based on [SilverStripe framework](https://code.google.com/p/lucene-silverstripe-plugin/source/browse/trunk/thirdparty/class.pdf2text.php?r=19)
 
 This version support composer and PSR-4 autoloading. Origin code is maintained by [Darren Inwood](https://code.google.com/u/102046044091186134429).
