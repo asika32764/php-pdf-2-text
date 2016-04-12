@@ -160,7 +160,7 @@ class Pdf2text
 
 				if (strlen($data))
 				{
-					if (preg_match_all("#BT[\n|\r](.*)ET[\n|\r]#ismU", $data . "ET\r", $textContainers))
+					if (preg_match_all("#BT[\n|\r| ](.*)ET[\n|\r| ]#ismU", $data . "ET\r", $textContainers))
 					{
 						$textContainers = @$textContainers[1];
 						$this->getDirtyTexts($texts, $textContainers);
@@ -445,15 +445,15 @@ class Pdf2text
 	{
 		for ($j = 0; $j < count($textContainers); $j++)
 		{
-			if (preg_match_all("#\[(.*)\]\s*TJ[\n|\r]#ismU", $textContainers[$j], $parts))
+			if (preg_match_all("#\[(.*)\]\s*TJ[\n|\r| ]#ismU", $textContainers[$j], $parts))
 			{
 				$texts = array_merge($texts, array(@implode('', $parts[1])));
 			}
-			elseif (preg_match_all("#T[d|w|m|f]\s*(\(.*\))\s*Tj[\n|\r]#ismU", $textContainers[$j], $parts))
+			elseif (preg_match_all("#T[d|w|m|f]\s*(\(.*\))\s*Tj[\n|\r| ]#ismU", $textContainers[$j], $parts))
 			{
 				$texts = array_merge($texts, array(@implode('', $parts[1])));
 			}
-			elseif (preg_match_all("#T[d|w|m|f]\s*(\[.*\])\s*Tj[\n|\r]#ismU", $textContainers[$j], $parts))
+			elseif (preg_match_all("#T[d|w|m|f]\s*(\[.*\])\s*Tj[\n|\r| ]#ismU", $textContainers[$j], $parts))
 			{
 				$texts = array_merge($texts, array(@implode('', $parts[1])));
 			}
