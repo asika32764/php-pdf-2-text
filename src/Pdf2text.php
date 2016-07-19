@@ -93,7 +93,7 @@ class Pdf2text
 	public function setUnicode($input)
 	{
 		// 4 for unicode. But 2 should work in most cases just fine
-		if ($input == true)
+		if ($input)
 		{
 			$this->multibyte = 4;
 		}
