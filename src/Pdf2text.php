@@ -190,13 +190,13 @@ class Pdf2text
 		$isOdd     = true;
 		$isComment = false;
 
-		for ($i = 0, $codeHigh = -1; $i < strlen($input) && $input[$i] != '>'; $i++)
+		for ($i = 0, $codeHigh = -1; $i < strlen($input) && $input[$i] !== '>'; $i++)
 		{
 			$c = $input[$i];
 
 			if ($isComment)
 			{
-				if ($c == '\r' || $c == '\n')
+				if ($c === '\r' || $c === '\n')
 				{
 					$isComment = false;
 				}
@@ -237,7 +237,7 @@ class Pdf2text
 			}
 		}
 
-		if ($input[$i] != '>')
+		if ($input[$i] !== '>')
 		{
 			return "";
 		}
@@ -264,29 +264,29 @@ class Pdf2text
 		$isComment = false;
 		$ords      = array();
 
-		for ($i = 0, $state = 0; $i < strlen($input) && $input[$i] != '~'; $i++)
+		for ($i = 0, $state = 0; $i < strlen($input) && $input[$i] !== '~'; $i++)
 		{
 			$c = $input[$i];
 
 			if ($isComment)
 			{
-				if ($c == '\r' || $c == '\n')
+				if ($c === '\r' || $c === '\n')
 				{
 					$isComment = false;
 				}
 				continue;
 			}
 
-			if ($c == '\0' || $c == '\t' || $c == '\r' || $c == '\f' || $c == '\n' || $c == ' ')
+			if ($c === '\0' || $c === '\t' || $c === '\r' || $c === '\f' || $c === '\n' || $c === ' ')
 			{
 				continue;
 			}
-			if ($c == '%')
+			if ($c === '%')
 			{
 				$isComment = true;
 				continue;
 			}
-			if ($c == 'z' && $state === 0)
+			if ($c === 'z' && $state === 0)
 			{
 				$output .= str_repeat(chr(0), 4);
 				continue;
@@ -411,19 +411,19 @@ class Pdf2text
 
 			foreach ($options as $key => $value)
 			{
-				if ($key == "ASCIIHexDecode")
+				if ($key === "ASCIIHexDecode")
 				{
 					$_stream = $this->decodeAsciiHex($_stream);
 				}
-				elseif ($key == "ASCII85Decode")
+				elseif ($key === "ASCII85Decode")
 				{
 					$_stream = $this->decodeAscii85($_stream);
 				}
-				elseif ($key == "FlateDecode")
+				elseif ($key === "FlateDecode")
 				{
 					$_stream = $this->decodeFlate($_stream);
 				}
-				elseif ($key == "Crypt")
+				elseif ($key === "Crypt")
 				{ // TO DO
 				}
 			}
@@ -578,23 +578,23 @@ class Pdf2text
 						{
 							$plain .= $c2;
 						}
-						elseif ($c2 == "n")
+						elseif ($c2 === "n")
 						{
 							$plain .= '\n';
 						}
-						elseif ($c2 == "r")
+						elseif ($c2 === "r")
 						{
 							$plain .= '\r';
 						}
-						elseif ($c2 == "t")
+						elseif ($c2 === "t")
 						{
 							$plain .= '\t';
 						}
-						elseif ($c2 == "b")
+						elseif ($c2 === "b")
 						{
 							$plain .= '\b';
 						}
-						elseif ($c2 == "f")
+						elseif ($c2 === "f")
 						{
 							$plain .= '\f';
 						}
