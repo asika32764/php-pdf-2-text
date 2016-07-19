@@ -16,43 +16,39 @@ namespace Asika;
 class Pdf2text
 {
 	/**
-	 * Use setUnicode(TRUE|FALSE)
-	 *
 	 * @var  int
 	 */
-	protected $multibyte = 4;
+	private $multibyte = 4;
 
 	/**
 	 * ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
 	 *
 	 * @var  int
 	 */
-	protected $convertquotes = ENT_QUOTES;
+	private $convertquotes = ENT_QUOTES;
 
 	/**
-	 * TRUE if you have problems with time-out
-	 *
 	 * @var  bool
 	 */
-	protected $showprogress = false;
+	private $showprogress = false;
 
 	/**
 	 * Property filename.
 	 *
 	 * @var  string
 	 */
-	protected $filename = '';
+	private $filename = '';
 
 	/**
 	 * Property decodedtext.
 	 *
 	 * @var  string
 	 */
-	protected $decodedtext = '';
+	private $decodedtext = '';
 
 	/**
 	 * Set file name.
-	 *
+	 * @deprecated Use "decode" method instead
 	 * @param string $filename
 	 *
 	 * @return  void
@@ -66,7 +62,7 @@ class Pdf2text
 
 	/**
 	 * Get output text.
-	 *
+	 * @deprecated Use "decode" method instead
 	 * @param boolean $echo True to echo it.
 	 *
 	 * @return  string
@@ -85,7 +81,7 @@ class Pdf2text
 
 	/**
 	 * Using unicode.
-	 *
+	 * @deprecated Use "decode" method instead
 	 * @param boolean $input True or not to use unicode.
 	 *
 	 * @return  void
@@ -104,17 +100,65 @@ class Pdf2text
 	}
 
 	/**
+	 * Method to set property showprogress
+	 * @deprecated Use "decode" method instead
+	 * @param   boolean $showprogress
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function showProgress($showprogress)
+	{
+		$this->showprogress = $showprogress;
+
+		return $this;
+	}
+
+	/**
+	 * Method to set property convertquotes
+	 * @deprecated Use "decode" method instead
+	 * @param   int $convertquotes
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function convertQuotes($convertquotes)
+	{
+		$this->convertquotes = $convertquotes;
+
+		return $this;
+	}
+	/**
 	 * Decode PDF
 	 *
-	 * @return  string
+	 * @param string $fileName
+	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool $showProgress TRUE if you have problems with time-out
+	 * @param bool $multiByteUnicode
+	 * @return string
+	 */
+	public function decode($fileName, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
+	{
+		$this->convertquotes = $convertQuotes;
+		$this->showprogress = $showProgress;
+		$this->multibyte = $multiByteUnicode ? 4 : 2;
+		$this->filename = $fileName;
+		$this->decodePDF();
+
+		return $this->output();
+	}
+
+	/**
+	 * Decode PDF
+	 *
+	 * @deprecated Use "decode" method instead
+	 * @return string
 	 */
 	public function decodePDF()
 	{
 		// Read the data from pdf file
-		$infile = @file_get_contents($this->filename, FILE_BINARY);
-		if (empty($infile))
+		$fileContents = @file_get_contents($this->filename, FILE_BINARY);
+		if (empty($fileContents))
 		{
-			return "";
+			return '';
 		}
 
 		// Get all text data.
@@ -122,7 +166,7 @@ class Pdf2text
 		$texts           = array();
 
 		// Get the list of all objects.
-		preg_match_all("#obj[\n|\r](.*)endobj[\n|\r]#ismU", $infile . "endobj\r", $objects);
+		preg_match_all("#obj[\n|\r](.*)endobj[\n|\r]#ismU", $fileContents . "endobj\r", $objects);
 		$objects = @$objects[1];
 
 		// Select objects with streams.
@@ -172,9 +216,11 @@ class Pdf2text
 				}
 			}
 		}
-
 		// Analyze text blocks taking into account character transformations and return results.
 		$this->decodedtext = $this->getTextUsingTransformations($texts, $transformations);
+
+		// Analyze text blocks taking into account character transformations and return results.
+		return $this->getTextUsingTransformations($texts, $transformations);
 	}
 
 	/**
@@ -624,33 +670,5 @@ class Pdf2text
 		}
 
 		return $document;
-	}
-
-	/**
-	 * Method to set property showprogress
-	 *
-	 * @param   boolean $showprogress
-	 *
-	 * @return  static  Return self to support chaining.
-	 */
-	public function showProgress($showprogress)
-	{
-		$this->showprogress = $showprogress;
-
-		return $this;
-	}
-
-	/**
-	 * Method to set property convertquotes
-	 *
-	 * @param   int $convertquotes
-	 *
-	 * @return  static  Return self to support chaining.
-	 */
-	public function convertQuotes($convertquotes)
-	{
-		$this->convertquotes = $convertquotes;
-
-		return $this;
 	}
 }
