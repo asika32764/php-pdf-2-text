@@ -184,7 +184,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function decodeAsciiHex($input)
+	private function decodeAsciiHex($input)
 	{
 		$output    = "";
 		$isOdd     = true;
@@ -257,7 +257,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function decodeAscii85($input)
+	private function decodeAscii85($input)
 	{
 		$output = "";
 
@@ -341,7 +341,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function decodeFlate($data)
+	private function decodeFlate($data)
 	{
 		return @gzuncompress($data);
 	}
@@ -353,7 +353,7 @@ class Pdf2text
 	 *
 	 * @return  array
 	 */
-	public function getObjectOptions($object)
+	private function getObjectOptions($object)
 	{
 		$options = array();
 
@@ -396,7 +396,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function getDecodedStream($stream, $options)
+	private function getDecodedStream($stream, $options)
 	{
 		$data = "";
 
@@ -441,7 +441,7 @@ class Pdf2text
 	 *
 	 * @return  void
 	 */
-	public function getDirtyTexts(&$texts, $textContainers)
+	private function getDirtyTexts(&$texts, $textContainers)
 	{
 		for ($j = 0; $j < count($textContainers); $j++)
 		{
@@ -468,7 +468,7 @@ class Pdf2text
 	 *
 	 * @return  void
 	 */
-	public function getCharTransformations(&$transformations, $stream)
+	private function getCharTransformations(&$transformations, $stream)
 	{
 		preg_match_all("#([0-9]+)\s+beginbfchar(.*)endbfchar#ismU", $stream, $chars, PREG_SET_ORDER);
 		preg_match_all("#([0-9]+)\s+beginbfrange(.*)endbfrange#ismU", $stream, $ranges, PREG_SET_ORDER);
@@ -527,7 +527,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function getTextUsingTransformations($texts, $transformations)
+	private function getTextUsingTransformations($texts, $transformations)
 	{
 		$document = "";
 
