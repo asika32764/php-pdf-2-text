@@ -36,10 +36,7 @@ class Pdf2TextTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testDecodePDF()
 	{
-		$this->instance->setFilename(__DIR__ . '/test.pdf');
-		$this->instance->decodePDF();
-
-		$output = $this->instance->output();
+		$output = $this->instance->decode(__DIR__ . '/test.pdf');
 
 		$text = <<<TXT
 Nick Fury: You think you
@@ -53,4 +50,3 @@ TXT;
 		$this->assertEquals($output, $text);
 	}
 }
- 

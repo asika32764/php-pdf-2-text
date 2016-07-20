@@ -16,43 +16,39 @@ namespace Asika;
 class Pdf2text
 {
 	/**
-	 * Use setUnicode(TRUE|FALSE)
-	 *
 	 * @var  int
 	 */
-	protected $multibyte = 4;
+	private $multibyte = 4;
 
 	/**
 	 * ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
 	 *
 	 * @var  int
 	 */
-	protected $convertquotes = ENT_QUOTES;
+	private $convertquotes = ENT_QUOTES;
 
 	/**
-	 * TRUE if you have problems with time-out
-	 *
 	 * @var  bool
 	 */
-	protected $showprogress = false;
+	private $showprogress = false;
 
 	/**
 	 * Property filename.
 	 *
 	 * @var  string
 	 */
-	protected $filename = '';
+	private $filename = '';
 
 	/**
 	 * Property decodedtext.
 	 *
 	 * @var  string
 	 */
-	protected $decodedtext = '';
+	private $decodedtext = '';
 
 	/**
 	 * Set file name.
-	 *
+	 * @deprecated Use "decode" method instead
 	 * @param string $filename
 	 *
 	 * @return  void
@@ -66,7 +62,7 @@ class Pdf2text
 
 	/**
 	 * Get output text.
-	 *
+	 * @deprecated Use "decode" method instead
 	 * @param boolean $echo True to echo it.
 	 *
 	 * @return  string
@@ -85,7 +81,7 @@ class Pdf2text
 
 	/**
 	 * Using unicode.
-	 *
+	 * @deprecated Use "decode" method instead
 	 * @param boolean $input True or not to use unicode.
 	 *
 	 * @return  void
@@ -93,7 +89,7 @@ class Pdf2text
 	public function setUnicode($input)
 	{
 		// 4 for unicode. But 2 should work in most cases just fine
-		if ($input == true)
+		if ($input)
 		{
 			$this->multibyte = 4;
 		}
@@ -104,17 +100,65 @@ class Pdf2text
 	}
 
 	/**
+	 * Method to set property showprogress
+	 * @deprecated Use "decode" method instead
+	 * @param   boolean $showprogress
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function showProgress($showprogress)
+	{
+		$this->showprogress = $showprogress;
+
+		return $this;
+	}
+
+	/**
+	 * Method to set property convertquotes
+	 * @deprecated Use "decode" method instead
+	 * @param   int $convertquotes
+	 *
+	 * @return  static  Return self to support chaining.
+	 */
+	public function convertQuotes($convertquotes)
+	{
+		$this->convertquotes = $convertquotes;
+
+		return $this;
+	}
+	/**
 	 * Decode PDF
 	 *
-	 * @return  string
+	 * @param string $fileName
+	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool $showProgress TRUE if you have problems with time-out
+	 * @param bool $multiByteUnicode
+	 * @return string
+	 */
+	public function decode($fileName, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
+	{
+		$this->convertquotes = $convertQuotes;
+		$this->showprogress = $showProgress;
+		$this->multibyte = $multiByteUnicode ? 4 : 2;
+		$this->filename = $fileName;
+		$this->decodePDF();
+
+		return $this->output();
+	}
+
+	/**
+	 * Decode PDF
+	 *
+	 * @deprecated Use "decode" method instead
+	 * @return string
 	 */
 	public function decodePDF()
 	{
 		// Read the data from pdf file
-		$infile = @file_get_contents($this->filename, FILE_BINARY);
-		if (empty($infile))
+		$fileContents = @file_get_contents($this->filename, FILE_BINARY);
+		if (empty($fileContents))
 		{
-			return "";
+			return '';
 		}
 
 		// Get all text data.
@@ -122,7 +166,7 @@ class Pdf2text
 		$texts           = array();
 
 		// Get the list of all objects.
-		preg_match_all("#obj[\n|\r](.*)endobj[\n|\r]#ismU", $infile . "endobj\r", $objects);
+		preg_match_all("#obj[\n|\r](.*)endobj[\n|\r]#ismU", $fileContents . "endobj\r", $objects);
 		$objects = @$objects[1];
 
 		// Select objects with streams.
@@ -172,9 +216,11 @@ class Pdf2text
 				}
 			}
 		}
-
 		// Analyze text blocks taking into account character transformations and return results.
 		$this->decodedtext = $this->getTextUsingTransformations($texts, $transformations);
+
+		// Analyze text blocks taking into account character transformations and return results.
+		return $this->getTextUsingTransformations($texts, $transformations);
 	}
 
 	/**
@@ -184,19 +230,19 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function decodeAsciiHex($input)
+	private function decodeAsciiHex($input)
 	{
 		$output    = "";
 		$isOdd     = true;
 		$isComment = false;
 
-		for ($i = 0, $codeHigh = -1; $i < strlen($input) && $input[$i] != '>'; $i++)
+		for ($i = 0, $codeHigh = -1; $i < strlen($input) && $input[$i] !== '>'; $i++)
 		{
 			$c = $input[$i];
 
 			if ($isComment)
 			{
-				if ($c == '\r' || $c == '\n')
+				if ($c === '\r' || $c === '\n')
 				{
 					$isComment = false;
 				}
@@ -237,7 +283,7 @@ class Pdf2text
 			}
 		}
 
-		if ($input[$i] != '>')
+		if ($input[$i] !== '>')
 		{
 			return "";
 		}
@@ -257,36 +303,36 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function decodeAscii85($input)
+	private function decodeAscii85($input)
 	{
 		$output = "";
 
 		$isComment = false;
 		$ords      = array();
 
-		for ($i = 0, $state = 0; $i < strlen($input) && $input[$i] != '~'; $i++)
+		for ($i = 0, $state = 0; $i < strlen($input) && $input[$i] !== '~'; $i++)
 		{
 			$c = $input[$i];
 
 			if ($isComment)
 			{
-				if ($c == '\r' || $c == '\n')
+				if ($c === '\r' || $c === '\n')
 				{
 					$isComment = false;
 				}
 				continue;
 			}
 
-			if ($c == '\0' || $c == '\t' || $c == '\r' || $c == '\f' || $c == '\n' || $c == ' ')
+			if ($c === '\0' || $c === '\t' || $c === '\r' || $c === '\f' || $c === '\n' || $c === ' ')
 			{
 				continue;
 			}
-			if ($c == '%')
+			if ($c === '%')
 			{
 				$isComment = true;
 				continue;
 			}
-			if ($c == 'z' && $state === 0)
+			if ($c === 'z' && $state === 0)
 			{
 				$output .= str_repeat(chr(0), 4);
 				continue;
@@ -341,7 +387,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function decodeFlate($data)
+	private function decodeFlate($data)
 	{
 		return @gzuncompress($data);
 	}
@@ -353,7 +399,7 @@ class Pdf2text
 	 *
 	 * @return  array
 	 */
-	public function getObjectOptions($object)
+	private function getObjectOptions($object)
 	{
 		$options = array();
 
@@ -396,7 +442,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function getDecodedStream($stream, $options)
+	private function getDecodedStream($stream, $options)
 	{
 		$data = "";
 
@@ -411,19 +457,19 @@ class Pdf2text
 
 			foreach ($options as $key => $value)
 			{
-				if ($key == "ASCIIHexDecode")
+				if ($key === "ASCIIHexDecode")
 				{
 					$_stream = $this->decodeAsciiHex($_stream);
 				}
-				elseif ($key == "ASCII85Decode")
+				elseif ($key === "ASCII85Decode")
 				{
 					$_stream = $this->decodeAscii85($_stream);
 				}
-				elseif ($key == "FlateDecode")
+				elseif ($key === "FlateDecode")
 				{
 					$_stream = $this->decodeFlate($_stream);
 				}
-				elseif ($key == "Crypt")
+				elseif ($key === "Crypt")
 				{ // TO DO
 				}
 			}
@@ -441,7 +487,7 @@ class Pdf2text
 	 *
 	 * @return  void
 	 */
-	public function getDirtyTexts(&$texts, $textContainers)
+	private function getDirtyTexts(&$texts, $textContainers)
 	{
 		for ($j = 0; $j < count($textContainers); $j++)
 		{
@@ -468,7 +514,7 @@ class Pdf2text
 	 *
 	 * @return  void
 	 */
-	public function getCharTransformations(&$transformations, $stream)
+	private function getCharTransformations(&$transformations, $stream)
 	{
 		preg_match_all("#([0-9]+)\s+beginbfchar(.*)endbfchar#ismU", $stream, $chars, PREG_SET_ORDER);
 		preg_match_all("#([0-9]+)\s+beginbfrange(.*)endbfrange#ismU", $stream, $ranges, PREG_SET_ORDER);
@@ -527,7 +573,7 @@ class Pdf2text
 	 *
 	 * @return  string
 	 */
-	public function getTextUsingTransformations($texts, $transformations)
+	private function getTextUsingTransformations($texts, $transformations)
 	{
 		$document = "";
 
@@ -578,23 +624,23 @@ class Pdf2text
 						{
 							$plain .= $c2;
 						}
-						elseif ($c2 == "n")
+						elseif ($c2 === "n")
 						{
 							$plain .= '\n';
 						}
-						elseif ($c2 == "r")
+						elseif ($c2 === "r")
 						{
 							$plain .= '\r';
 						}
-						elseif ($c2 == "t")
+						elseif ($c2 === "t")
 						{
 							$plain .= '\t';
 						}
-						elseif ($c2 == "b")
+						elseif ($c2 === "b")
 						{
 							$plain .= '\b';
 						}
-						elseif ($c2 == "f")
+						elseif ($c2 === "f")
 						{
 							$plain .= '\f';
 						}
@@ -624,33 +670,5 @@ class Pdf2text
 		}
 
 		return $document;
-	}
-
-	/**
-	 * Method to set property showprogress
-	 *
-	 * @param   boolean $showprogress
-	 *
-	 * @return  static  Return self to support chaining.
-	 */
-	public function showProgress($showprogress)
-	{
-		$this->showprogress = $showprogress;
-
-		return $this;
-	}
-
-	/**
-	 * Method to set property convertquotes
-	 *
-	 * @param   int $convertquotes
-	 *
-	 * @return  static  Return self to support chaining.
-	 */
-	public function convertQuotes($convertquotes)
-	{
-		$this->convertquotes = $convertquotes;
-
-		return $this;
 	}
 }

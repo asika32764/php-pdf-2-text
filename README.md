@@ -20,10 +20,7 @@ This version support composer and PSR-4 autoloading. Origin code is maintained b
 
 ``` php
 $reader = new \Asika\Pdf2text;
-$reader->setFilename($file);
-$reader->decodePDF();
-
-$output = $reader->output();
+$output = $reader->decode($fileName);
 ```
 
 # Lincense
