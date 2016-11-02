@@ -126,8 +126,25 @@ class Pdf2text
 
 		return $this;
 	}
+	
 	/**
-	 * Decode PDF
+	 * Save decode options
+	 *
+	 * @param string $fileName
+	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool $showProgress TRUE if you have problems with time-out
+	 * @param bool $multiByteUnicode
+	 */
+	public function saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode)
+	{
+		$this->convertquotes = $convertQuotes;
+		$this->showprogress = $showProgress;
+		$this->multibyte = $multiByteUnicode ? 4 : 2;
+		$this->filename = $fileName;
+	}
+	
+	/**
+	 * Decode PDF file
 	 *
 	 * @param string $fileName
 	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
@@ -137,12 +154,32 @@ class Pdf2text
 	 */
 	public function decode($fileName, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
 	{
-		$this->convertquotes = $convertQuotes;
-		$this->showprogress = $showProgress;
-		$this->multibyte = $multiByteUnicode ? 4 : 2;
-		$this->filename = $fileName;
-		$this->decodePDF();
-
+                $this->saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode);
+		
+                if (empty($fileName))
+		{
+			return '';
+		}
+		
+		// Read the data from pdf file
+		$pdfContent = @file_get_contents($this->filename, FILE_BINARY);
+		$this->decodePDF($pdfContent);
+		return $this->output();
+	}
+	
+	/**
+	 * Decode PDF content
+	 *
+	 * @param string $pdfContent Binary PDF content
+	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool $showProgress TRUE if you have problems with time-out
+	 * @param bool $multiByteUnicode
+	 * @return string
+	 */
+	public function decodeContent($pdfContent, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
+	{
+                $this->saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode);
+		$this->decodePDF($pdfContent);
 		return $this->output();
 	}
 
@@ -150,23 +187,18 @@ class Pdf2text
 	 * Decode PDF
 	 *
 	 * @deprecated Use "decode" method instead
+         * @param string $pdfContent
 	 * @return string
 	 */
-	public function decodePDF()
+	public function decodePDF($pdfContent)
 	{
-		// Read the data from pdf file
-		$fileContents = @file_get_contents($this->filename, FILE_BINARY);
-		if (empty($fileContents))
-		{
-			return '';
-		}
 
 		// Get all text data.
 		$transformations = array();
 		$texts           = array();
 
 		// Get the list of all objects.
-		preg_match_all("#obj[\n|\r](.*)endobj[\n|\r]#ismU", $fileContents . "endobj\r", $objects);
+		preg_match_all("#obj[\n|\r](.*)endobj[\n|\r]#ismU", $pdfContent . "endobj\r", $objects);
 		$objects = @$objects[1];
 
 		// Select objects with streams.
