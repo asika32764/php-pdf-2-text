@@ -178,7 +178,7 @@ class Pdf2text
 	 */
 	public function decodeContent($pdfContent, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
 	{
-                $this->saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode);
+                $this->saveOptions(null, $convertQuotes, $showProgress, $multiByteUnicode);
 		$this->decodePDF($pdfContent);
 		return $this->output();
 	}
