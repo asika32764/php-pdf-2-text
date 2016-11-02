@@ -9,10 +9,11 @@ namespace Asika;
 
 /**
  * Simple PDF to Text class.
- * This is a free software and baseed on SilverStripe "class.pdf2text.php"
+ *
+ * This is a free software and based on SilverStripe "class.pdf2text.php"
  *
  * @see  https://code.google.com/p/lucene-silverstripe-plugin/source/browse/trunk/thirdparty/class.pdf2text.php?r=19
-*/
+ */
 class Pdf2text
 {
 	/**
@@ -48,7 +49,9 @@ class Pdf2text
 
 	/**
 	 * Set file name.
+	 *
 	 * @deprecated Use "decode" method instead
+	 *
 	 * @param string $filename
 	 *
 	 * @return  void
@@ -62,7 +65,9 @@ class Pdf2text
 
 	/**
 	 * Get output text.
+	 *
 	 * @deprecated Use "decode" method instead
+	 *
 	 * @param boolean $echo True to echo it.
 	 *
 	 * @return  string
@@ -81,7 +86,9 @@ class Pdf2text
 
 	/**
 	 * Using unicode.
+	 *
 	 * @deprecated Use "decode" method instead
+	 *
 	 * @param boolean $input True or not to use unicode.
 	 *
 	 * @return  void
@@ -101,7 +108,9 @@ class Pdf2text
 
 	/**
 	 * Method to set property showprogress
+	 *
 	 * @deprecated Use "decode" method instead
+	 *
 	 * @param   boolean $showprogress
 	 *
 	 * @return  static  Return self to support chaining.
@@ -115,7 +124,9 @@ class Pdf2text
 
 	/**
 	 * Method to set property convertquotes
+	 *
 	 * @deprecated Use "decode" method instead
+	 *
 	 * @param   int $convertquotes
 	 *
 	 * @return  static  Return self to support chaining.
@@ -126,60 +137,64 @@ class Pdf2text
 
 		return $this;
 	}
-	
+
 	/**
 	 * Save decode options
 	 *
 	 * @param string $fileName
-	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
-	 * @param bool $showProgress TRUE if you have problems with time-out
-	 * @param bool $multiByteUnicode
+	 * @param int    $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool   $showProgress  TRUE if you have problems with time-out
+	 * @param bool   $multiByteUnicode
 	 */
 	public function saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode)
 	{
 		$this->convertquotes = $convertQuotes;
-		$this->showprogress = $showProgress;
-		$this->multibyte = $multiByteUnicode ? 4 : 2;
-		$this->filename = $fileName;
+		$this->showprogress  = $showProgress;
+		$this->multibyte     = $multiByteUnicode ? 4 : 2;
+		$this->filename      = $fileName;
 	}
-	
+
 	/**
 	 * Decode PDF file
 	 *
 	 * @param string $fileName
-	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
-	 * @param bool $showProgress TRUE if you have problems with time-out
-	 * @param bool $multiByteUnicode
+	 * @param int    $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool   $showProgress  TRUE if you have problems with time-out
+	 * @param bool   $multiByteUnicode
+	 *
 	 * @return string
 	 */
 	public function decode($fileName, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
 	{
-                $this->saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode);
-		
-                if (empty($fileName))
+		$this->saveOptions($fileName, $convertQuotes, $showProgress, $multiByteUnicode);
+
+		if (empty($fileName))
 		{
 			return '';
 		}
-		
+
 		// Read the data from pdf file
 		$pdfContent = @file_get_contents($this->filename, FILE_BINARY);
 		$this->decodePDF($pdfContent);
+
 		return $this->output();
 	}
-	
+
 	/**
 	 * Decode PDF content
 	 *
-	 * @param string $pdfContent Binary PDF content
-	 * @param int $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
-	 * @param bool $showProgress TRUE if you have problems with time-out
-	 * @param bool $multiByteUnicode
+	 * @param string $pdfContent    Binary PDF content
+	 * @param int    $convertQuotes ENT_COMPAT (double-quotes), ENT_QUOTES (Both), ENT_NOQUOTES (None)
+	 * @param bool   $showProgress  TRUE if you have problems with time-out
+	 * @param bool   $multiByteUnicode
+	 *
 	 * @return string
 	 */
 	public function decodeContent($pdfContent, $convertQuotes = ENT_QUOTES, $showProgress = false, $multiByteUnicode = true)
 	{
-                $this->saveOptions(null, $convertQuotes, $showProgress, $multiByteUnicode);
+		$this->saveOptions('', $convertQuotes, $showProgress, $multiByteUnicode);
 		$this->decodePDF($pdfContent);
+
 		return $this->output();
 	}
 
@@ -187,12 +202,13 @@ class Pdf2text
 	 * Decode PDF
 	 *
 	 * @deprecated Use "decode" method instead
-         * @param string $pdfContent
+	 *
+	 * @param string $pdfContent
+	 *
 	 * @return string
 	 */
-	public function decodePDF($pdfContent)
+	public function decodePDF($pdfContent = '')
 	{
-
 		// Get all text data.
 		$transformations = array();
 		$texts           = array();
@@ -403,7 +419,8 @@ class Pdf2text
 						throw new \Exception('Error');
 					}
 					$output .= $o;
-				} catch (\Exception $e)
+				}
+				catch (\Exception $e)
 				{ /*Dont do anything*/
 				}
 			}

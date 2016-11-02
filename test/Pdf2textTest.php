@@ -49,4 +49,25 @@ TXT;
 
 		$this->assertEquals($output, $text);
 	}
+
+	/**
+	 * testDecodeContent
+	 *
+	 * @return  void
+	 */
+	public function testDecodeContent()
+	{
+		$output = $this->instance->decodeContent(file_get_contents(__DIR__ . '/test.pdf'));
+
+		$text = <<<TXT
+Nick Fury: You think you
+’
+re the only hero in the world?
+
+TXT;
+		$output = str_replace(array("\n", "\r"), '', trim($output));
+		$text   = str_replace(array("\n", "\r"), '', trim($text));
+
+		$this->assertEquals($output, $text);
+	}
 }
