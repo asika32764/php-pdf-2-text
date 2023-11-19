@@ -2,15 +2,17 @@
 /**
  * Part of pdf2text project. 
  *
- * @license  GNU General Public License version 2 or later;
+ * @license  MIT
  */
+
+namespace Asika\Pdf2text\Test;
 
 use Asika\Pdf2text;
 
 /**
  * Class TestPdf2text
  */
-class Pdf2TextTest extends \PHPUnit_Framework_TestCase
+class Pdf2TextTest extends \PHPUnit\Framework\TestCase
 {
 	/**
 	 * Property instance.
@@ -24,8 +26,8 @@ class Pdf2TextTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
-	{
+	protected function setUp(): void
+    {
 		$this->instance = new Pdf2text;
 	}
 

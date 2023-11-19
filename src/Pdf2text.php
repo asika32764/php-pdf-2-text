@@ -2,7 +2,7 @@
 /**
  * Simple PDF to Text class.
  *
- * @license  GNU General Public License version 2 or later;
+ * @license  MIT
  */
 
 namespace Asika;

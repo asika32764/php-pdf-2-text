@@ -11,7 +11,7 @@ This version support composer and PSR-4 autoloading. Origin code is maintained b
 ``` json
 {
     "require": {
-        "asika/pdf2text": "1.*"
+        "asika/pdf2text": "~1.0"
     }
 }
 ```
@@ -25,5 +25,5 @@ $output = $reader->decode($fileName);
 
 # Lincense
 
-GNU General Public License version 2 or later.
+MIT
 

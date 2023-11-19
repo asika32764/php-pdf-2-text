@@ -1,20 +1,26 @@
 {
     "name": "asika/pdf2text",
     "description": "Simple PHP PDF to text class.",
-    "license": "GPL v2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Simon Asika",
             "email": "asika32764@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
-    "require": {
-
-    },
-	"autoload": {
+    "minimum-stability": "beta",
+    "autoload": {
 		"psr-4": {
 			"Asika\\" : "src"
 		}
-	}
+	},
+    "autoload-dev": {
+        "psr-4": {
+            "Asika\\Pdf2text\\Test\\" : "test"
+        }
+    },
+    "require-dev": {
+        "php": ">=8.0",
+        "phpunit/phpunit": "^10.4"
+    }
 }
