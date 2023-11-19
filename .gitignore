@@ -1,6 +1,7 @@
 # System
 .*
 !.gitignore
+!.github
 
 # Composer
 /vendor
